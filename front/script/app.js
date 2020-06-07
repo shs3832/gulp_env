@@ -9,6 +9,8 @@ $(document).ready(function () {
     console.log(`backticktest:${v1}`);
     const value = 102;
     $("h1").css({
-        background: "black",
+        background: "yellow",
     });
 });
+
+async function test() {}

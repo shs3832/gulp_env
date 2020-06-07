@@ -6,6 +6,8 @@ body {
 h1 {
     display: flex;
     transition: step-start;
+    flex: 1;
+    flex-direction: column;
 }
 .autoplacement-example {
     display: grid;

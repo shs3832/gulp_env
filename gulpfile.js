@@ -17,9 +17,11 @@ const paths = {
         dest: "./dist/css/",
     },
     scripts: {
-        src: ["./front/script/**/*.js", "!./front/script/libs/*.js"],
+        src: ["./front/script/**/*.js", "!./front/script/lib/*.js"],
         dest: "./dist/js/",
         concat: "./dist/js/*.js",
+        lib: "./front/script/lib/*.js",
+        libDest: "./dist/js/lib",
     },
     images: {
         src: "./front/images/**/*.{jpg,jpeg,png,gif,svg,JPG}",
@@ -117,6 +119,12 @@ function reload(done) {
     browserSync.reload();
     done();
 }
+function doLibScripts(done) {
+    return gulp.series(libScripts)(done);
+}
+function libScripts() {
+    return gulp.src(paths.scripts.lib).pipe(gulp.dest(paths.scripts.libDest));
+}
 
 function watch() {
     browserSync.init({
@@ -129,6 +137,7 @@ function watch() {
     gulp.watch(paths.fonts.src, doFontsCopy);
     gulp.watch(paths.styles.src, doStyles);
     gulp.watch(paths.scripts.src, doScripts);
+    gulp.watch(paths.scripts.lib, doLibScripts);
     gulp.watch(paths.html.src, reload);
 }
 
@@ -137,6 +146,7 @@ exports.build = parallel(
     doFontsCopy,
     doStyles,
     doScripts,
+    doLibScripts,
     doInject
 );
 exports.default = parallel(doInject, watch);

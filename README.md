@@ -14,8 +14,8 @@
 1. npm i
 2. npm i -D gulp gulp-cli
 
-
 ----- command ----
 
 gulp build : 작업완료후 빌드시 사용
+
 gulp : watch 모드 실행

@@ -1,0 +1,169 @@
+$design-desktop: 1280; // design desktop maximum
+$design-tablet: 1024; // design tablet maximum
+$design-mobile: 768; // design mobile maximum
+
+$device-max: 768; // mobile maximum
+$device-min: 360; // mobile minimum
+
+// extend
+%clearfix {
+	*zoom: 1;
+	&:before,
+	&:after {
+		content: ' ';
+		display: table;
+	}
+	&:after {
+		clear: both;
+	}
+}
+%listreset {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+@function get-vw($target, $standard) {
+	$vw-context: ($standard * 0.01) * 1px;
+	@return ($target/$vw-context) * 1vw;
+}
+
+@mixin box-center($position) {
+	position: absolute;
+	@if $position == 'vertical' {
+		top: 50%;
+		-webkit-transform: translateY(-50%);
+		-ms-transform: translateY(-50%);
+		transform: translateY(-50%);
+	} @else if $position == 'horizontal' {
+		left: 50%;
+		-webkit-transform: translateX(-50%);
+		-ms-transform: translateX(-50%);
+		transform: translate(-50%);
+	} @else if $position == 'both' {
+		top: 50%;
+		left: 50%;
+		-webkit-transform: translate(-50%, -50%);
+		-ms-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+	}
+}
+
+@mixin responsive-font($font, $standard, $min: false, $max: false) {
+	@if $standard<=$device-min {
+		@if not($min) {
+			$min: $font/2;
+		}
+	} @else {
+		@if not($min) {
+			$min: 12px;
+		}
+	}
+
+	$responsive: get-vw($font, $standard);
+	font-size: $responsive;
+	$responsive-unitless: $responsive / ($responsive - $responsive + 1);
+
+	@if $min {
+		$min-breakpoint: $min / $responsive-unitless * 100;
+
+		@if ($standard<=$device-min) and ($min-breakpoint>=$device-max) {
+		} @else if ($standard>$device-min) and ($min-breakpoint<=$device-min) {
+		} @else {
+			@media (max-width: #{$min-breakpoint}) {
+				font-size: $min;
+			}
+		}
+	}
+
+	@if $max {
+		$max-breakpoint: $max / $responsive-unitless * 100;
+
+		@if ($standard<=$device-min) and ($max-breakpoint>=$device-max) {
+		} @else if ($standard>$device-min) and ($max-breakpoint<=$device-min) {
+		} @else {
+			@media (min-width: #{$max-breakpoint}) {
+				font-size: $max;
+			}
+		}
+	}
+}
+
+@mixin responsive-vw($target, $var, $standard, $max: false) {
+	@if ($target== 'padding' or $target== 'margin') {
+		#{$target}: (get-vw(nth($var, 1), $standard))
+			(get-vw(nth($var, 2), $standard))
+			(get-vw(nth($var, 3), $standard))
+			(get-vw(nth($var, 4), $standard));
+	} @else {
+		#{$target}: get-vw($var, $standard);
+	}
+
+	@if $max== 'max' {
+		@if $standard<=$device-max {
+			// for mobile
+			@if $device-max<$standard {
+				@media (min-width:#{$device-max}px) {
+					#{$target}: $var;
+				}
+			}
+		} @else {
+			// for desktop
+			@if $standard<$design-desktop {
+				@media (min-width:#{$standard}px) {
+					#{$target}: $var;
+				}
+			} @else {
+				@media (min-width:#{$design-desktop}px) {
+					#{$target}: $var;
+				}
+			}
+		}
+	}
+}
+
+@mixin screen($size, $type: max, $pixels: $device-max) {
+	@if $size == 'mobile' {
+		@media screen and (max-width: $device-max + px) {
+			@content;
+		}
+	} @else if $size == 'desktop' {
+		@media screen and (min-width: $design-tablet + px) and (max-width: $design-desktop + px) {
+			@content;
+		}
+	} @else if $size == 'tablet' {
+		@media screen and (min-width: $design-mobile + px) and (max-width: $design-tablet + px) {
+			@content;
+		}
+	} @else if $size == 'landscape' {
+		@media screen and (orientation: landscape) {
+			@content;
+		}
+	} @else if $size == 'portrait' {
+		@media screen and (orientation: portrait) {
+			@content;
+		}
+	} @else if $size == 'custom' {
+		@media screen and ($type + -width: $pixels + px) {
+			@content;
+		}
+	}
+}
+
+@mixin line-height($font, $line) {
+	@if $line== 'auto' {
+		line-height: 175%;
+	} @else {
+		$line-height: ($line * 100 / $font) * 1%;
+		line-height: #{$line-height};
+	}
+}
+
+@mixin letter-spacing($val, $font-size) {
+	$var: ($val * $font-size / 1000) * 1px;
+	letter-spacing: $var;
+}
+
+@mixin radius($var) {
+	border-radius: $var;
+}

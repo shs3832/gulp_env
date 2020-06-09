@@ -39,10 +39,7 @@ const paths = {
 };
 
 function injectHtml() {
-	return gulp
-		.src('./front/**/*.html')
-		.pipe(gulp.dest('./dist/'))
-		.pipe(browserSync.stream());
+	return gulp.src('./front/**/*.html').pipe(gulp.dest('./dist/'));
 }
 
 function imagesCopy() {
@@ -71,8 +68,7 @@ function style() {
 		.on('error', sass.logError)
 		.pipe(postcss([autoprefixer({grid: true})]))
 		.pipe(sourcemaps.write('./'))
-		.pipe(gulp.dest(paths.styles.dest))
-		.pipe(browserSync.stream());
+		.pipe(gulp.dest(paths.styles.dest));
 }
 
 function preprocessJs() {
@@ -88,7 +84,6 @@ function preprocessJs() {
 			.pipe(uglify())
 			// .pipe(concat('chunk.js'))
 			.pipe(gulp.dest(paths.scripts.dest))
-			.pipe(browserSync.stream())
 	);
 }
 
@@ -137,10 +132,10 @@ function watch() {
 	});
 	gulp.watch(paths.images.src, doImagesCopy);
 	gulp.watch(paths.fonts.src, doFontsCopy);
-	gulp.watch(paths.styles.src, doStyles);
-	gulp.watch(paths.scripts.src, doScripts);
+	gulp.watch(paths.styles.src, doStyles).on('change', browserSync.reload);
+	gulp.watch(paths.scripts.src, doScripts).on('change', browserSync.reload);
 	gulp.watch(paths.scripts.lib, doLibScripts);
-	gulp.watch(paths.html.src, doInject);
+	gulp.watch(paths.html.src, doInject).on('change', browserSync.reload);
 }
 
 exports.build = series(

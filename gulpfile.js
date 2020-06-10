@@ -1,171 +1,171 @@
 const gulp = require("gulp"),
-  browserSync = require("browser-sync").create(),
-  sass = require("gulp-sass"),
-  postcss = require("gulp-postcss"),
-  autoprefixer = require("autoprefixer"),
-  babel = require("gulp-babel"),
-  sourcemaps = require("gulp-sourcemaps"),
-  uglify = require("gulp-uglify"),
-  inject = require("gulp-inject"),
-  { parallel, series } = require("gulp"),
-  imagemin = require("gulp-imagemin"),
-  clean = require("gulp-clean"),
-  plumber = require("gulp-plumber"),
-  header = require("gulp-header");
+    browserSync = require("browser-sync").create(),
+    sass = require("gulp-sass"),
+    postcss = require("gulp-postcss"),
+    autoprefixer = require("autoprefixer"),
+    babel = require("gulp-babel"),
+    sourcemaps = require("gulp-sourcemaps"),
+    uglify = require("gulp-uglify"),
+    inject = require("gulp-inject"),
+    { parallel, series } = require("gulp"),
+    imagemin = require("gulp-imagemin"),
+    clean = require("gulp-clean"),
+    plumber = require("gulp-plumber"),
+    header = require("gulp-header");
 
 const pkg = require("./package.json");
 const banner = [
-  "/**",
-  " * <%= pkg.name %> - <%= pkg.description %>",
-  " * author : <%= pkg.author %>",
-  " * company : <%= pkg.company %>",
-  " * license : <%= pkg.license %>",
-  " * release date : <%= date %>",
-  " */",
-  "",
+    "/**",
+    " * <%= pkg.name %> - <%= pkg.description %>",
+    " * author : <%= pkg.author %>",
+    " * company : <%= pkg.company %>",
+    " * license : <%= pkg.license %>",
+    " * release date : <%= date %>",
+    " */",
+    "",
 ].join("\n");
 
 const paths = {
-  styles: {
-    src: ["./front/scss/**/*.scss"],
-    dest: "./dist/css/",
-  },
-  scripts: {
-    src: ["./front/script/**/*.js", "!./front/script/lib/*.js"],
-    dest: "./dist/js/",
-    concat: "./dist/js/*.js",
-    lib: "./front/script/lib/*.js",
-    libDest: "./dist/js/lib",
-  },
-  images: {
-    src: "./front/images/**/*.{jpg,jpeg,png,gif,svg,JPG}",
-    dest: "./dist/images/",
-  },
-  fonts: {
-    src: "./front/fonts/**/*.{woff,woff2,eot,ttf,svg,otf}",
-    dest: "./dist/fonts/",
-  },
-  html: {
-    src: "./front/**/*.html",
-  },
+    styles: {
+        src: ["./front/scss/**/*.scss"],
+        dest: "./dist/css/",
+    },
+    scripts: {
+        src: ["./front/script/**/*.js", "!./front/script/lib/*.js"],
+        dest: "./dist/js/",
+        concat: "./dist/js/*.js",
+        lib: "./front/script/lib/*.js",
+        libDest: "./dist/js/lib",
+    },
+    images: {
+        src: "./front/images/**/*.{jpg,jpeg,png,gif,svg,JPG}",
+        dest: "./dist/images/",
+    },
+    fonts: {
+        src: "./front/fonts/**/*.{woff,woff2,eot,ttf,svg,otf}",
+        dest: "./dist/fonts/",
+    },
+    html: {
+        src: "./front/**/*.html",
+    },
 };
 
 function injectHtml() {
-  const target = gulp.src("./front/**/*.html");
-  const sources = gulp.src(
-    [
-      "./dist/js/lib/*.js",
-      "./dist/js/*.js",
-      "./dist/css/common/*.css",
-      "./dist/css/*.css",
-    ],
-    {
-      read: false,
-    }
-  );
+    const target = gulp.src("./front/**/*.html");
+    const sources = gulp.src(
+        [
+            "./dist/js/lib/*.js",
+            "./dist/js/*.js",
+            "./dist/css/common/*.css",
+            "./dist/css/*.css",
+        ],
+        {
+            read: false,
+        }
+    );
 
-  return target
-    .pipe(
-      inject(sources, {
-        ignorePath: "dist",
-        addRootSlash: true,
-      })
-    )
-    .pipe(gulp.dest("./dist/"));
+    return target
+        .pipe(
+            inject(sources, {
+                ignorePath: "dist",
+                addRootSlash: true,
+            })
+        )
+        .pipe(gulp.dest("./dist/"));
 }
 function doInject(done) {
-  return gulp.series(injectHtml)(done);
+    return gulp.series(injectHtml)(done);
 }
 
 function imagesCopy() {
-  return gulp
-    .src(paths.images.src)
-    .pipe(imagemin())
-    .pipe(gulp.dest(paths.images.dest));
+    return gulp
+        .src(paths.images.src)
+        .pipe(imagemin())
+        .pipe(gulp.dest(paths.images.dest));
 }
 function doImagesCopy(done) {
-  return gulp.series(imagesCopy)(done);
+    return gulp.series(imagesCopy)(done);
 }
 
 function fontsCopy() {
-  return gulp.src(paths.fonts.src).pipe(gulp.dest(paths.fonts.dest));
+    return gulp.src(paths.fonts.src).pipe(gulp.dest(paths.fonts.dest));
 }
 function doFontsCopy(done) {
-  return gulp.series(fontsCopy)(done);
+    return gulp.series(fontsCopy)(done);
 }
 
 function style() {
-  return gulp
-    .src(paths.styles.src)
-    .pipe(plumber())
-    .pipe(sourcemaps.init())
-    .pipe(
-      sass({
-        outputStyle: "expanded",
-      })
-    )
-    .on("error", sass.logError)
-    .pipe(postcss([autoprefixer({ grid: true })]))
-    .pipe(sourcemaps.write("./"))
-    .pipe(header(banner, { pkg: pkg, date: new Date().toLocaleString() }))
-    .pipe(gulp.dest(paths.styles.dest));
+    return gulp
+        .src(paths.styles.src)
+        .pipe(plumber())
+        .pipe(sourcemaps.init())
+        .pipe(
+            sass({
+                outputStyle: "expanded",
+            })
+        )
+        .on("error", sass.logError)
+        .pipe(postcss([autoprefixer({ grid: true })]))
+        .pipe(sourcemaps.write("./"))
+        .pipe(header(banner, { pkg: pkg, date: new Date().toLocaleString() }))
+        .pipe(gulp.dest(paths.styles.dest));
 }
 function doStyles(done) {
-  return gulp.series(style)(done);
+    return gulp.series(style)(done);
 }
 
 function preprocessJs() {
-  return gulp
-    .src(paths.scripts.src)
-    .pipe(plumber())
-    .pipe(
-      babel({
-        presets: ["@babel/env"],
-      })
-    )
-    .pipe(uglify())
-    .pipe(header(banner, { pkg: pkg, date: new Date().toLocaleString() }))
-    .pipe(gulp.dest(paths.scripts.dest));
+    return gulp
+        .src(paths.scripts.src)
+        .pipe(plumber())
+        .pipe(
+            babel({
+                presets: ["@babel/env"],
+            })
+        )
+        .pipe(uglify())
+        .pipe(header(banner, { pkg: pkg, date: new Date().toLocaleString() }))
+        .pipe(gulp.dest(paths.scripts.dest));
 }
 function doScripts(done) {
-  return gulp.series(preprocessJs)(done);
+    return gulp.series(preprocessJs)(done);
 }
 function libScripts() {
-  return gulp.src(paths.scripts.lib).pipe(gulp.dest(paths.scripts.libDest));
+    return gulp.src(paths.scripts.lib).pipe(gulp.dest(paths.scripts.libDest));
 }
 function doLibScripts(done) {
-  return gulp.series(libScripts)(done);
+    return gulp.series(libScripts)(done);
 }
 
 function cleanDist() {
-  return gulp.src("./dist/*", { read: false }).pipe(clean());
+    return gulp.src("./dist/*", { read: false }).pipe(clean());
 }
 
 function doCleanDist(done) {
-  return gulp.series(cleanDist)(done);
+    return gulp.series(cleanDist)(done);
 }
 
 function watch() {
-  browserSync.init({
-    server: {
-      baseDir: "./dist/",
-    },
-  });
-  gulp.watch(paths.html.src, doInject).on("change", browserSync.reload);
-  gulp.watch(paths.images.src, doImagesCopy);
-  gulp.watch(paths.fonts.src, doFontsCopy);
-  gulp.watch(paths.styles.src, doStyles).on("change", browserSync.reload);
-  gulp.watch(paths.scripts.src, doScripts).on("change", browserSync.reload);
-  gulp.watch(paths.scripts.lib, doLibScripts);
+    browserSync.init({
+        server: {
+            baseDir: "./dist/",
+        },
+    });
+    gulp.watch(paths.html.src, doInject).on("change", browserSync.reload);
+    gulp.watch(paths.images.src, doImagesCopy);
+    gulp.watch(paths.fonts.src, doFontsCopy);
+    gulp.watch(paths.styles.src, doStyles).on("change", browserSync.reload);
+    gulp.watch(paths.scripts.src, doScripts).on("change", browserSync.reload);
+    gulp.watch(paths.scripts.lib, doLibScripts);
 }
 
 exports.build = series(
-  doCleanDist,
-  doImagesCopy,
-  doFontsCopy,
-  doStyles,
-  doScripts,
-  doLibScripts,
-  doInject
+    doCleanDist,
+    doImagesCopy,
+    doFontsCopy,
+    doStyles,
+    doScripts,
+    doLibScripts,
+    doInject
 );
 exports.default = parallel(watch);

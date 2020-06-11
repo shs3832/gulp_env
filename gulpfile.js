@@ -121,6 +121,10 @@ function style() {
 		.pipe(
 			sass({
 				outputStyle: 'expanded',
+				indentType: 'tab',
+				precision: 6,
+				indentWidth: 2,
+				sourceComments: true,
 			}),
 		)
 		.on('error', sass.logError)
@@ -186,7 +190,7 @@ exports.build = series(
 	doStyles,
 	doScripts,
 	doLibScripts,
-  doInject,
-  doInclude
+	doInject,
+	doInclude,
 );
 exports.default = parallel(watch);

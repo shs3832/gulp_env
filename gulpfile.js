@@ -7,11 +7,14 @@ const gulp = require('gulp'),
 	sourcemaps = require('gulp-sourcemaps'),
 	uglify = require('gulp-uglify'),
 	inject = require('gulp-inject'),
-	{parallel, series} = require('gulp'),
+	{parallel, series, lastRun} = require('gulp'),
 	imagemin = require('gulp-imagemin'),
 	clean = require('gulp-clean'),
 	plumber = require('gulp-plumber'),
 	header = require('gulp-header'),
+	newer = require('gulp-newer'),
+	cached = require('gulp-cached'),
+	remember = require('gulp-remember'),
 	fileinclude = require('gulp-file-include');
 
 const pkg = require('./package.json');
@@ -67,6 +70,7 @@ function injectHtml() {
 	);
 
 	return target
+
 		.pipe(
 			inject(sources, {
 				ignorePath: 'dist',
@@ -83,6 +87,7 @@ function doInject(done) {
 function includeCommon() {
 	return gulp
 		.src(['./dist/html/**/*.html', '!./dist/html/common/*.html'])
+		.pipe(newer('./dist/html/common/*.html'))
 		.pipe(
 			fileinclude({
 				prefix: '@@',
@@ -99,6 +104,7 @@ function doInclude(done) {
 function imagesCopy() {
 	return gulp
 		.src(paths.images.src)
+		.pipe(newer(paths.images.dest))
 		.pipe(imagemin())
 		.pipe(gulp.dest(paths.images.dest));
 }
@@ -115,7 +121,8 @@ function doFontsCopy(done) {
 
 function style() {
 	return gulp
-		.src(paths.styles.src)
+		.src(paths.styles.src, {since: lastRun(style)})
+		.pipe(cached('styles'))
 		.pipe(plumber())
 		.pipe(sourcemaps.init())
 		.pipe(
@@ -130,6 +137,7 @@ function style() {
 		.on('error', sass.logError)
 		.pipe(postcss([autoprefixer({grid: true})]))
 		.pipe(sourcemaps.write('./'))
+		.pipe(remember('styles'))
 		.pipe(header(banner, {pkg: pkg, date: new Date().toLocaleString()}))
 		.pipe(gulp.dest(paths.styles.dest));
 }
@@ -139,7 +147,8 @@ function doStyles(done) {
 
 function preprocessJs() {
 	return gulp
-		.src(paths.scripts.src)
+		.src(paths.scripts.src, {since: lastRun(preprocessJs)})
+		.pipe(cached('scripts'))
 		.pipe(plumber())
 		.pipe(
 			babel({
@@ -147,6 +156,7 @@ function preprocessJs() {
 			}),
 		)
 		.pipe(uglify())
+		.pipe(remember('scripts'))
 		.pipe(header(banner, {pkg: pkg, date: new Date().toLocaleString()}))
 		.pipe(gulp.dest(paths.scripts.dest));
 }
@@ -154,7 +164,10 @@ function doScripts(done) {
 	return gulp.series(preprocessJs)(done);
 }
 function libScripts() {
-	return gulp.src(paths.scripts.lib).pipe(gulp.dest(paths.scripts.libDest));
+	return gulp
+		.src(paths.scripts.lib)
+		.pipe(newer(paths.scripts.libDest))
+		.pipe(gulp.dest(paths.scripts.libDest));
 }
 function doLibScripts(done) {
 	return gulp.series(libScripts)(done);

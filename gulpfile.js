@@ -127,7 +127,7 @@ function style() {
 		.pipe(sourcemaps.init())
 		.pipe(
 			sass({
-				outputStyle: 'expanded',
+				outputStyle: 'compressed',
 				indentType: 'tab',
 				precision: 6,
 				indentWidth: 2,

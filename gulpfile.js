@@ -15,6 +15,7 @@ const gulp = require('gulp'),
 	newer = require('gulp-newer'),
 	cached = require('gulp-cached'),
 	remember = require('gulp-remember'),
+	del = require('del'),
 	fileinclude = require('gulp-file-include');
 
 const pkg = require('./package.json');
@@ -36,21 +37,21 @@ const paths = {
 	},
 	scripts: {
 		src: [
-			'./front/script/**/*.js',
+			'./front/script/*.js',
 			'!./front/script/lib/*.js',
 			'!./front/script/admin/**/*.*',
 		],
 		dest: './dest/js/',
 		concat: './dest/js/*.js',
 		lib: './front/script/lib/*.js',
-		libDest: './dest/js/lib',
+		libDest: './dest/js/lib/',
 	},
 	adminScripts: {
-		src: ['./front/script/admin/**/*.js', '!./front/script/admin/lib/*.js'],
+		src: ['./front/script/admin/**/*.js'],
 		dest: './dest/js/admin/',
 		concat: './dest/js/admin/*.js',
 		lib: './front/script/admin/lib/*.js',
-		libDest: './dest/js/admin/lib',
+		libDest: './dest/js/admin/lib/',
 	},
 	images: {
 		src: './front/images/**/*.{jpg,jpeg,png,gif,svg,JPG}',
@@ -74,10 +75,7 @@ function injectHtml() {
 			'./dest/js/*.js',
 			'./dest/css/common/*.css',
 			'./dest/css/*.css',
-		],
-		{
-			read: false,
-		},
+		]
 	);
 
 	return target
@@ -103,10 +101,7 @@ function adminInjectHtml() {
 			'./dest/js/admin/*.js',
 			'./dest/css/admin/common/*.css',
 			'./dest/css/admin/*.css',
-		],
-		{
-			read: false,
-		},
+		]
 	);
 
 	return target
@@ -216,7 +211,7 @@ function doScripts(done) {
 function adminPreprocessJs() {
 	return gulp
 		.src(paths.adminScripts.src, {since: lastRun(adminPreprocessJs)})
-		.pipe(cached('scripts'))
+		.pipe(cached('adminScripts'))
 		.pipe(plumber())
 		.pipe(
 			babel({
@@ -224,7 +219,7 @@ function adminPreprocessJs() {
 			}),
 		)
 		.pipe(uglify())
-		.pipe(remember('scripts'))
+		.pipe(remember('adminScripts'))
 		.pipe(header(banner, {pkg: pkg, date: new Date().toLocaleString()}))
 		.pipe(gulp.dest(paths.adminScripts.dest));
 }
@@ -261,12 +256,10 @@ function watch() {
 	gulp.watch(paths.images.src, doImagesCopy);
 	gulp.watch(paths.fonts.src, doFontsCopy);
 	gulp.watch(paths.styles.src, doStyles).on('change', browserSync.reload);
-	gulp.watch(paths.scripts.src, doScripts).on('change', browserSync.reload);
-	gulp.watch(paths.scripts.src, adminDoScripts).on(
-		'change',
-		browserSync.reload,
-	);
 	gulp.watch(paths.scripts.lib, doLibScripts);
+	gulp.watch(paths.scripts.src, doScripts).on('change', browserSync.reload);
+	gulp.watch(paths.adminScripts.src, adminDoScripts).on('change',	browserSync.reload);
+
 	// gulp.watch(paths.html.dest, doInclude).on('change', browserSync.reload);
 }
 
@@ -276,11 +269,13 @@ exports.build = series(
 	doFontsCopy,
 	doStyles,
 	doScripts,
+	adminDoScripts,
 	doLibScripts,
 	doInject,
 	doAdminInject,
 	doPagelist,
-	adminDoScripts,
+	
 	// doInclude,
 );
 exports.default = parallel(watch);
+exports.clean = series(doCleanDist);

@@ -1,0 +1,195 @@
+[
+	{
+		"categories": "공통",
+		"items": [
+			{
+				"depth2": "메인",
+				"depth3": "",
+				"depth4": "",
+				"url": "/html/front/index.html",
+				"complete": true,
+				"memo": ""
+			},
+			{
+				"depth2": "서브",
+				"depth3": "서브페이지 레이아웃",
+				"depth4": "",
+				"url": "/html/front/layout.html",
+				"complete": true,
+				"memo": ""
+			},
+			{
+				"depth2": "404",
+				"depth3": "",
+				"depth4": "",
+				"url": "/html/front/404error.html",
+				"complete": true,
+				"memo": "404 에러 페이지"
+			}
+		]
+	},
+	{
+		"categories": "회사소개",
+		"items": [
+			{
+				"depth2": "인사말",
+				"depth3": "",
+				"depth4": "",
+				"url": "/html/front/about/greeting.html",
+				"complete": true,
+				"memo": ""
+			},
+			{
+				"depth2": "SE임파워",
+				"depth3": "",
+				"depth4": "",
+				"url": "/html/front/about/overview.html",
+				"complete": true,
+				"memo": ""
+			},
+			{
+				"depth2": "주요연혁",
+				"depth3": "",
+				"depth4": "",
+				"url": "/html/front/about/history.html",
+				"complete": true,
+				"memo": ""
+			},
+			{
+				"depth2": "조직도",
+				"depth3": "",
+				"depth4": "",
+				"url": "/html/front/about/orgchart.html",
+				"complete": true,
+				"memo": ""
+			},
+			{
+				"depth2": "찾아오시는 길",
+				"depth3": "구로 사회적 경제창업지원센터",
+				"depth4": "",
+				"url": "/html/front/about/map1.html",
+				"complete": true,
+				"memo": ""
+			}
+		]
+	},
+	{
+		"categories": "사업분야",
+		"items": [
+			{
+				"depth2": "핵심사업",
+				"depth3": "디지털혁신",
+				"depth4": "",
+				"url": "/html/front/business/core/digital.html",
+				"complete": true,
+				"memo": ""
+			},
+			{
+				"depth2": "",
+				"depth3": "도시혁신",
+				"depth4": "",
+				"url": "/html/front/business/core/city.html",
+				"complete": true,
+				"memo": ""
+			},
+			{
+				"depth2": "",
+				"depth3": "창업지원",
+				"depth4": "",
+				"url": "/html/front/business/core/founded.html",
+				"complete": true,
+				"memo": ""
+			},
+			{
+				"depth2": "",
+				"depth3": "국제협업",
+				"depth4": "",
+				"url": "/html/front/business/core/coop.html",
+				"complete": true,
+				"memo": ""
+			},
+			{
+				"depth2": "사회적기업육성사업",
+				"depth3": "사업설명회",
+				"depth4": "",
+				"url": "/html/front/business/foster/briefing.html",
+				"complete": false,
+				"memo": "1차 오픈 시 적용하지 않음"
+			},
+			{
+				"depth2": "",
+				"depth3": "프로그램",
+				"depth4": "",
+				"url": "/html/front/business/foster/program.html",
+				"complete": false,
+				"memo": "1차 오픈 시 적용하지 않음"
+			}
+		]
+	},
+	{
+		"categories": "육성사업팀",
+		"items": [
+			{
+				"depth2": "사회적기업 인증/지정현황",
+				"depth3": "list",
+				"depth4": "",
+				"url": "/html/front/fosterTeam/status.html",
+				"complete": true,
+				"memo": ""
+			},
+			{
+				"depth2": "",
+				"depth3": "view",
+				"depth4": "",
+				"url": "/html/front/fosterTeam/status-view.html",
+				"complete": true,
+				"memo": ""
+			},
+			{
+				"depth2": "육성사업팀 소개",
+				"depth3": "",
+				"depth4": "",
+				"url": "/html/front/fosterTeam/introduce.html",
+				"complete": true,
+				"memo": ""
+			}
+		]
+	},
+	{
+		"categories": "고객센터",
+		"items": [
+			{
+				"depth2": "공지사항",
+				"depth3": "list",
+				"depth4": "",
+				"url": "/html/front/news/notice_list.html",
+				"complete": true,
+				"memo": ""
+			},
+			{
+				"depth2": "",
+				"depth3": "view",
+				"depth4": "",
+				"url": "/html/front/news/notice_view.html",
+				"complete": true,
+				"memo": ""
+			},
+			{
+				"depth2": "언론보도",
+				"depth3": "",
+				"depth4": "",
+				"url": "/html/front/news/report.html",
+				"complete": true,
+				"memo": ""
+			},
+			{
+				"depth2": "문의하기",
+				"depth3": "",
+				"depth4": "",
+				"url": "/html/front/news/contact.html",
+				"complete": true,
+				"memo": ""
+			}
+		]
+	}
+]

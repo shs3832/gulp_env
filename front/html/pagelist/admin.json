@@ -1,0 +1,125 @@
+[{
+  "categories" : "공통",
+  "items" : [{
+      "depth2": "로그인",
+      "depth3": "",
+      "depth4": "",
+      "url": "/html/admin/login.html",
+      "complete": true,
+      "memo": ""
+    },{
+      "depth2": "레이아웃",
+      "depth3": "",
+      "depth4": "",
+      "url": "/html/admin/layout.html",
+      "complete": true,
+      "memo": ""
+    },{
+    "depth2": "list 레이아웃",
+    "depth3": "",
+    "depth4": "",
+    "url": "/html/admin/list_layout.html",
+    "complete": true,
+    "memo": ""
+  },{
+    "depth2": "view 레이아웃",
+    "depth3": "",
+    "depth4": "",
+    "url": "/html/admin/view_layout.html",
+    "complete": true,
+    "memo": ""
+  }]
+},{
+  "categories" : "MAIN",
+  "items" : [{
+      "depth2": "Visaul",
+      "depth3": "목록",
+      "depth4": "",
+      "url": "/html/admin/main/visual_list.html",
+      "complete": true,
+      "memo": ""
+    },{
+      "depth2": "",
+      "depth3": "등록/수정/상세",
+      "depth4": "",
+      "url": "/html/admin/main/visual_view.html",
+      "complete": true,
+      "memo": ""
+    }]
+},{
+  "categories" : "육성사업팀",
+  "items" : [{
+    "depth2": "인증/지정현황",
+    "depth3": "목록",
+    "depth4": "",
+    "url": "/html/admin/fosterTeam/status_list.html",
+    "complete": true,
+    "memo": ""
+  },{
+    "depth2": "",
+    "depth3": "등록/수정/상세",
+    "depth4": "",
+    "url": "/html/admin/fosterTeam/status_view.html",
+    "complete": false,
+    "memo": "내용 영역 에디터인지 textarea인지 확인 필요"
+  },{
+    "depth2": "육성사업팀 소개",
+    "depth3": "목록",
+    "depth4": "",
+    "url": "/html/admin/fosterTeam/introduce_list.html",
+    "complete": true,
+    "memo": ""
+  },{
+    "depth2": "",
+    "depth3": "등록/수정/상세",
+    "depth4": "",
+    "url": "/html/admin/fosterTeam/introduce_view.html",
+    "complete": true,
+    "memo": ""
+  }]
+},{
+  "categories" : "고객센터",
+  "items" : [{
+      "depth2": "공지사항",
+      "depth3": "목록",
+      "depth4": "",
+      "url": "/html/admin/news/notice_list.html",
+      "complete": true,
+      "memo": ""
+    },{
+      "depth2": "",
+      "depth3": "등록/수정/상세",
+      "depth4": "",
+      "url": "/html/admin/news/notice_view.html",
+      "complete": false,
+      "memo": "에디터 붙여야 함"
+    },{
+    "depth2": "언론보도",
+    "depth3": "목록",
+    "depth4": "",
+    "url": "/html/admin/news/report_list.html",
+    "complete": true,
+    "memo": ""
+  },{
+    "depth2": "",
+    "depth3": "등록/수정/상세",
+    "depth4": "",
+    "url": "/html/admin/news/report_view.html",
+    "complete": true,
+    "memo": ""
+  },{
+    "depth2": "문의관리",
+    "depth3": "목록",
+    "depth4": "",
+    "url": "/html/admin/news/contact_list.html",
+    "complete": true,
+    "memo": ""
+  },{
+    "depth2": "",
+    "depth3": "상세",
+    "depth4": "",
+    "url": "/html/admin/news/contact_view.html",
+    "complete": true,
+    "memo": ""
+  }]
+}]

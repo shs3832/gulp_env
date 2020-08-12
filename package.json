@@ -48,6 +48,9 @@
 		"IE 10"
 	],
 	"dependencies": {
+		"gulp-cached": "^1.1.1",
+		"gulp-newer": "^1.4.0",
+		"gulp-remember": "^1.0.1",
 		"jQuery": "^1.7.4"
 	}
 }

@@ -15,6 +15,7 @@ const gulp = require('gulp'),
 	newer = require('gulp-newer'),
 	cached = require('gulp-cached'),
 	remember = require('gulp-remember'),
+	del = require('del'),
 	fileinclude = require('gulp-file-include');
 
 const pkg = require('./package.json');
@@ -32,69 +33,112 @@ const banner = [
 const paths = {
 	styles: {
 		src: ['./front/scss/**/*.scss'],
-		dest: './dist/css/',
+		dest: './dest/css/',
 	},
 	scripts: {
-		src: ['./front/script/**/*.js', '!./front/script/lib/*.js'],
-		dest: './dist/js/',
-		concat: './dist/js/*.js',
+		src: [
+			'./front/script/*.js',
+			'!./front/script/lib/*.js',
+			'!./front/script/admin/**/*.*',
+		],
+		dest: './dest/js/',
+		concat: './dest/js/*.js',
 		lib: './front/script/lib/*.js',
-		libDest: './dist/js/lib',
+		libDest: './dest/js/lib/',
+	},
+	adminScripts: {
+		src: ['./front/script/admin/**/*.js'],
+		dest: './dest/js/admin/',
+		concat: './dest/js/admin/*.js',
+		lib: './front/script/admin/lib/*.js',
+		libDest: './dest/js/admin/lib/',
 	},
 	images: {
 		src: './front/images/**/*.{jpg,jpeg,png,gif,svg,JPG}',
-		dest: './dist/images/',
+		dest: './dest/images/',
 	},
 	fonts: {
 		src: './front/fonts/**/*.{woff,woff2,eot,ttf,svg,otf}',
-		dest: './dist/fonts/',
+		dest: './dest/fonts/',
 	},
 	html: {
 		src: './front/**/*.html',
-		dest: './dist/html/common/',
+		dest: './dest/html/common/',
 	},
 };
 
 function injectHtml() {
-	const target = gulp.src('./front/**/*.html');
+	const target = gulp.src(['./front/**/*.html']);
 	const sources = gulp.src(
 		[
-			'./dist/js/lib/*.js',
-			'./dist/js/*.js',
-			'./dist/css/common/*.css',
-			'./dist/css/*.css',
-		],
-		{
-			read: false,
-		},
+			'./dest/js/lib/*.js',
+			'./dest/js/*.js',
+			'./dest/css/common/*.css',
+			'./dest/css/*.css',
+		]
 	);
 
 	return target
 
 		.pipe(
 			inject(sources, {
-				ignorePath: 'dist',
+				ignorePath: 'dest',
 				addRootSlash: true,
 			}),
 		)
 
-		.pipe(gulp.dest('./dist/'));
+		.pipe(gulp.dest('./dest/'));
 }
 function doInject(done) {
 	return gulp.series(injectHtml)(done);
 }
 
+function adminInjectHtml() {
+	const target = gulp.src('./front/html/admin/**/*.html');
+	const sources = gulp.src(
+		[
+			'./dest/js/admin/lib/*.js',
+			'./dest/js/admin/*.js',
+			'./dest/css/admin/common/*.css',
+			'./dest/css/admin/*.css',
+		]
+	);
+
+	return target
+
+		.pipe(
+			inject(sources, {
+				ignorePath: 'dest',
+				addRootSlash: true,
+			}),
+		)
+
+		.pipe(gulp.dest('./dest/html/admin/'));
+}
+function doAdminInject(done) {
+	return gulp.series(adminInjectHtml)(done);
+}
+
+function pagelist() {
+	return gulp
+		.src('./front/html/pagelist/*.*')
+		.pipe(gulp.dest('./dest/html/pagelist/'));
+}
+function doPagelist(done) {
+	return gulp.series(pagelist)(done);
+}
+
 function includeCommon() {
 	return gulp
-		.src(['./dist/html/**/*.html', '!./dist/html/common/*.html'])
-		.pipe(newer('./dist/html/common/*.html'))
+		.src(['./dest/html/**/*.html', '!./dest/html/common/*.html'])
+		.pipe(newer('./dest/html/common/*.html'))
 		.pipe(
 			fileinclude({
 				prefix: '@@',
 				basepath: '@file',
 			}),
 		)
-		.pipe(gulp.dest('./dist/html/'));
+		.pipe(gulp.dest('./dest/html/'));
 }
 
 function doInclude(done) {
@@ -163,6 +207,25 @@ function preprocessJs() {
 function doScripts(done) {
 	return gulp.series(preprocessJs)(done);
 }
+
+function adminPreprocessJs() {
+	return gulp
+		.src(paths.adminScripts.src, {since: lastRun(adminPreprocessJs)})
+		.pipe(cached('adminScripts'))
+		.pipe(plumber())
+		.pipe(
+			babel({
+				presets: ['@babel/env'],
+			}),
+		)
+		.pipe(uglify())
+		.pipe(remember('adminScripts'))
+		.pipe(header(banner, {pkg: pkg, date: new Date().toLocaleString()}))
+		.pipe(gulp.dest(paths.adminScripts.dest));
+}
+function adminDoScripts(done) {
+	return gulp.series(adminPreprocessJs)(done);
+}
 function libScripts() {
 	return gulp
 		.src(paths.scripts.lib)
@@ -174,7 +237,7 @@ function doLibScripts(done) {
 }
 
 function cleanDist() {
-	return gulp.src('./dist/*', {read: false}).pipe(clean());
+	return gulp.src('./dest/*', {read: false}).pipe(clean());
 }
 
 function doCleanDist(done) {
@@ -184,16 +247,20 @@ function doCleanDist(done) {
 function watch() {
 	browserSync.init({
 		server: {
-			baseDir: './dist/',
+			baseDir: './dest/',
 		},
 	});
 	gulp.watch(paths.html.src, doInject).on('change', browserSync.reload);
+	gulp.watch(paths.html.src, doPagelist).on('change', browserSync.reload);
+	gulp.watch(paths.html.src, doAdminInject).on('change', browserSync.reload);
 	gulp.watch(paths.images.src, doImagesCopy);
 	gulp.watch(paths.fonts.src, doFontsCopy);
 	gulp.watch(paths.styles.src, doStyles).on('change', browserSync.reload);
-	gulp.watch(paths.scripts.src, doScripts).on('change', browserSync.reload);
 	gulp.watch(paths.scripts.lib, doLibScripts);
-	gulp.watch(paths.html.dest, doInclude).on('change', browserSync.reload);
+	gulp.watch(paths.scripts.src, doScripts).on('change', browserSync.reload);
+	gulp.watch(paths.adminScripts.src, adminDoScripts).on('change',	browserSync.reload);
+
+	// gulp.watch(paths.html.dest, doInclude).on('change', browserSync.reload);
 }
 
 exports.build = series(
@@ -202,8 +269,13 @@ exports.build = series(
 	doFontsCopy,
 	doStyles,
 	doScripts,
+	adminDoScripts,
 	doLibScripts,
 	doInject,
-	doInclude,
+	doAdminInject,
+	doPagelist,
+	
+	// doInclude,
 );
 exports.default = parallel(watch);
+exports.clean = series(doCleanDist);
